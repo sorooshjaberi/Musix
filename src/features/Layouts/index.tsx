@@ -7,12 +7,9 @@ const Layout = ({ children }: Props) => {
   return (
     <MuiContainer
       maxWidth="xs"
+      className="relative h-[100vh] max-h-[900px]"
       sx={{
         boxShadow: "0 0 10px -3px #000",
-        height: "100vh",
-        maxHeight: "900px",
-        position: "relative",
-        padding: 0,
         paddingTop: (theme) => theme.spacing(2),
       }}
     >
