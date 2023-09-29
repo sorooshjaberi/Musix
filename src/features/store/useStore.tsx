@@ -61,4 +61,25 @@ export const useStore = create<States & Actions>((set) => ({
         songs: state.songs,
       };
     }),
+  changeTotalSong: (value, id) =>
+    set((state) => {
+      const selectedSong = getSongById(state, id);
+      if (selectedSong) {
+        selectedSong.totalLength = value;
+      }
+      return {
+        songs: state.songs,
+      };
+    }),
+  editSongData: (songData, id) => {
+    set((state) => {
+      const selectedSong = getSongById(state, id);
+      if (selectedSong) {
+        Object.assign(selectedSong, songData);
+      }
+      return {
+        songs: state.songs,
+      };
+    });
+  },
 }));

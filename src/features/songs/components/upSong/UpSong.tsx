@@ -2,11 +2,47 @@ import Song from "@features/songs/components/song/Song";
 import { useStore } from "@features/store/useStore";
 import MusicSlider from "@features/ui/components/musicSlider/MusicSlider";
 import { Box, Paper, Slider, Typography } from "@mui/material";
+import ReactAudioPlayer from "react-audio-player";
 import cntl from "cntl";
+import { HtmlHTMLAttributes, useEffect, useRef, useState } from "react";
+import { useTimer } from "@features/store/useTimer";
 
 type Props = {};
 const UpSong = (props: Props) => {
   const { upSong } = useStore();
+  const { total, traversed, changeManualTime, timerActivated } = useTimer();
+  const [musicPlayer, setMusicPlayer] = useState<null | HTMLAudioElement>(null);
+
+  //pause and play
+  useEffect(() => {
+    if (upSong?.playing) {
+      musicPlayer?.play();
+    } else {
+      musicPlayer?.pause();
+    }
+  }, [upSong?.playing, musicPlayer]);
+
+  //track timer
+  useEffect(() => {
+    const timer = setInterval(() => {
+      if (musicPlayer && upSong && timerActivated) {
+        changeManualTime({
+          total: musicPlayer.duration,
+          traversed: musicPlayer.currentTime,
+        });
+      }
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, [musicPlayer, upSong, timerActivated]);
+
+  //manual timer set
+  useEffect(() => {
+    if (upSong) {
+      if (musicPlayer?.currentTime && upSong.traversedLength)
+        musicPlayer.currentTime = upSong.traversedLength;
+    }
+  }, [upSong?.traversedLength, upSong?.totalLength]);
 
   return (
     <>
@@ -31,11 +67,12 @@ const UpSong = (props: Props) => {
             mt={({ spacing }) => spacing(-2)}
           >
             <MusicSlider
-              total={upSong?.totalLength}
-              traversed={upSong?.traversedLength}
+              total={musicPlayer?.duration}
+              traversed={musicPlayer?.currentTime}
               songId={upSong.id}
             />
           </Box>
+          <audio ref={setMusicPlayer} src={upSong.songSrc} />
         </Paper>
       )}
     </>

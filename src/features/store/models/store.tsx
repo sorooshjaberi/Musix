@@ -9,6 +9,7 @@ export type ISong = {
   traversedLength?: number;
   totalLength?: number;
   imageSrc?: string;
+  songSrc: string;
 };
 export type States = {
   songs: ISong[];
@@ -20,5 +21,7 @@ export type Actions = {
   playSong: (id: Id) => void;
   pauseSong: (id: Id) => void;
   setSongs: (songs: ISong[]) => void;
-  changeTraversedSong : (value : number , songId  : Id)=> void;
+  changeTraversedSong: (value: number, songId: Id) => void;
+  changeTotalSong : (value: number, songId: Id) => void;
+  editSongData : (value : Partial<ISong> , songId : Id) => void;
 };

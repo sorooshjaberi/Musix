@@ -1,23 +1,15 @@
-import DetailedThreeDots from "@features/ui/components/detailedThreeDots";
-import Like from "@features/ui/components/like";
-import {
-  Box,
-  ButtonBase,
-  ButtonBaseProps,
-  Stack,
-  Typography,
-} from "@mui/material";
+import { Box, ButtonBase, ButtonBaseProps } from "@mui/material";
 import { BsShare } from "react-icons/bs";
 import Image from "next/image";
 import { ReactNode, useState } from "react";
 import PlayPause from "@features/ui/components/PlayPause";
 import SmallSongImage from "@features/ui/components/songItemImage/SmallSongImage";
-import SongData from "@features/songs/components/songData/SongData";
+import SongData from "@features/songs/components/SongMetaData";
 import { useStore } from "@features/store/useStore";
 import { Id, ISong } from "@features/store/models/store";
 import SongControllers from "@features/ui/components/songControllers";
 import clsx from "clsx";
-
+import cntl from "cntl";
 type Props = {
   songData: ISong;
   buttonBaseProps?: ButtonBaseProps;
@@ -41,7 +33,11 @@ const Song = (props: Props) => {
       disableRipple
       {...{
         ...props.buttonBaseProps,
-        className: clsx("block", props.buttonBaseProps?.className),
+        className: clsx(
+          "block",
+          cntl`overflow-hidden w-full`,
+          props.buttonBaseProps?.className,
+        ),
       }}
     >
       <Box

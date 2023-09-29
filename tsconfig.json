@@ -19,6 +19,6 @@
       "@features/*": ["./features/*"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "metadataExtractor.mjs"],
   "exclude": ["node_modules"]
 }

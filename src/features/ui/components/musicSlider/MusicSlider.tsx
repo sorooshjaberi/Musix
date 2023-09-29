@@ -2,8 +2,9 @@ import { Id } from "@features/store/models/store";
 import { useStore } from "@features/store/useStore";
 import { Box, Slider, Typography } from "@mui/material";
 import moment from "moment";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { isUndefined } from "lodash";
+import { useTimer } from "@features/store/useTimer";
 type Props = {
   traversed?: number;
   total?: number;
@@ -14,7 +15,9 @@ const MusicSlider = (props: Props) => {
     props.traversed,
   );
   const { changeTraversedSong } = useStore();
-  
+  const { changeTimerActivation, changeTraversedSong: timerChangeTraversed } =
+    useTimer();
+
   const minTraversed = !isUndefined(traversed)
     ? moment.utc(traversed * 1000).format("m:s")
     : "??";
@@ -22,7 +25,7 @@ const MusicSlider = (props: Props) => {
     ? moment.utc(props.total * 1000).format("m:s")
     : "??";
 
-    //changes the traversed amount if the props.traversed has changed from somewhere else
+  //changes the traversed amount if the props.traversed has changed from somewhere else
   useEffect(() => {
     if (!isUndefined(props.traversed) && props.traversed !== traversed) {
       setTraversed(props.traversed);
@@ -36,12 +39,16 @@ const MusicSlider = (props: Props) => {
         size="small"
         min={0}
         max={props.total}
-        value={traversed}
+        value={traversed && Math.round(traversed)}
         onChangeCommitted={(_, value) => {
           changeTraversedSong(value as number, props.songId);
+          changeTimerActivation(true);
         }}
         onChange={(_, value) => {
           setTraversed(value as number);
+        }}
+        onMouseDown={() => {
+          changeTimerActivation(false);
         }}
       />
       <Box className="flex items-center justify-between" color={"grey"}>
