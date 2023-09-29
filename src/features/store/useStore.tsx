@@ -51,4 +51,14 @@ export const useStore = create<States & Actions>((set) => ({
         songs: state.songs,
       };
     }),
+  changeTraversedSong: (value, id) =>
+    set((state) => {
+      const selectedSong = getSongById(state, id);
+      if (selectedSong) {
+        selectedSong.traversedLength = value;
+      }
+      return {
+        songs: state.songs,
+      };
+    }),
 }));

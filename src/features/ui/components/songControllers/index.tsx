@@ -26,6 +26,7 @@ const SongControllers = (props: Props) => {
     <Box
       className={"ml-auto flex items-center"}
       sx={{ gap: ({ spacing }) => spacing(2) }}
+      onClick={(e) => e.stopPropagation()}
     >
       <Like
         {...{

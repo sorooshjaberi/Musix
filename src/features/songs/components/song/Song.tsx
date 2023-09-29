@@ -1,6 +1,12 @@
 import DetailedThreeDots from "@features/ui/components/detailedThreeDots";
 import Like from "@features/ui/components/like";
-import { Box, ButtonBase, Stack, Typography } from "@mui/material";
+import {
+  Box,
+  ButtonBase,
+  ButtonBaseProps,
+  Stack,
+  Typography,
+} from "@mui/material";
 import { BsShare } from "react-icons/bs";
 import Image from "next/image";
 import { ReactNode, useState } from "react";
@@ -10,9 +16,11 @@ import SongData from "@features/songs/components/songData/SongData";
 import { useStore } from "@features/store/useStore";
 import { Id, ISong } from "@features/store/models/store";
 import SongControllers from "@features/ui/components/songControllers";
+import clsx from "clsx";
 
 type Props = {
   songData: ISong;
+  buttonBaseProps?: ButtonBaseProps;
 };
 const Song = (props: Props) => {
   const { songData } = props;
@@ -29,7 +37,13 @@ const Song = (props: Props) => {
     </>,
   ];
   return (
-    <ButtonBase className="block">
+    <ButtonBase
+      disableRipple
+      {...{
+        ...props.buttonBaseProps,
+        className: clsx("block", props.buttonBaseProps?.className),
+      }}
+    >
       <Box
         sx={{
           padding: (theme) => theme.spacing(2),

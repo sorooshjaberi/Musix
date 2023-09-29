@@ -1,9 +1,12 @@
 import Navigation from "@features/Layouts/components/navigation/Navigation";
+import UpSong from "@features/songs/components/upSong/UpSong";
+import { useStore } from "@features/store/useStore";
 import { Box, Container as MuiContainer, useTheme } from "@mui/material";
 import { ReactNode } from "react";
 
 type Props = { children: ReactNode };
 const Layout = ({ children }: Props) => {
+  const {upSong} = useStore()
   return (
     <MuiContainer
       maxWidth="xs"
@@ -18,13 +21,21 @@ const Layout = ({ children }: Props) => {
         sx={{
           overflow: "auto",
           padding: (theme) => theme.spacing(4, 2),
-          height: (theme) =>
-            `calc(100% - ${theme.components?.MuiBottomNavigation?.defaultProps
-              ?.style?.height} - ${theme.spacing(1)} )`,
+          paddingBottom: (theme) =>
+           upSong? `calc(${theme.components?.MuiBottomNavigation?.defaultProps?.style?.height} + ${theme.spacing(20)})` : "initial",
+          height: (theme) => {
+            const bottomNavigationHeight =
+              theme.components?.MuiBottomNavigation?.defaultProps?.style
+                ?.height;
+            return `calc(100% - ${bottomNavigationHeight} - ${theme.spacing(
+              1,
+            )} )`;
+          },
         }}
       >
         {children}
       </Box>
+      <UpSong />
       <Navigation />
     </MuiContainer>
   );

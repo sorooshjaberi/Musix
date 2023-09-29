@@ -1,5 +1,5 @@
 import { createTheme, ThemeProvider, responsiveFontSizes } from "@mui/material";
-import { lightBlue } from "@mui/material/colors";
+import { lightBlue, grey } from "@mui/material/colors";
 import { nunito_sans } from "assets/font";
 import CssBaseline from "@mui/material/CssBaseline";
 import { ReactNode } from "react";
@@ -17,6 +17,7 @@ export const MuiCustomTheme = (props: Props) => {
     palette: {
       mode,
       primary: lightBlue,
+      grey,
     },
     spacing: (factor: number) => `${factor * 0.4}rem`,
     components: {
@@ -25,6 +26,11 @@ export const MuiCustomTheme = (props: Props) => {
           style: {
             height: "60px",
           },
+        },
+      },
+      MuiIcon: {
+        defaultProps: {
+          color: "primary",
         },
       },
     },

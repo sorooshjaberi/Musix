@@ -20,4 +20,5 @@ export type Actions = {
   playSong: (id: Id) => void;
   pauseSong: (id: Id) => void;
   setSongs: (songs: ISong[]) => void;
+  changeTraversedSong : (value : number , songId  : Id)=> void;
 };

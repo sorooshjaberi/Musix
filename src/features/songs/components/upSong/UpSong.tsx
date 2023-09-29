@@ -1,50 +1,44 @@
+import Song from "@features/songs/components/song/Song";
 import { useStore } from "@features/store/useStore";
-import { Paper } from "@mui/material";
+import MusicSlider from "@features/ui/components/musicSlider/MusicSlider";
+import { Box, Paper, Slider, Typography } from "@mui/material";
+import cntl from "cntl";
 
 type Props = {};
 const UpSong = (props: Props) => {
-  const { songs } = useStore();
-  const upSong = songs.find((song) => song.isUp);
+  const { upSong } = useStore();
+
   return (
-    <Paper
-      sx={{ position: "absolute", bottom: 0, left: 0, right: 0, width: "100%" }}
-    >
-      <Box
-        sx={{
-          padding: (theme) => theme.spacing(2),
-        }}
-        className="flex items-center"
-        onClick={playHandler}
-      >
-        {/* song image */}
-        <Box mr={(theme) => theme.spacing(4)}>
-          <Image
-            width={60}
-            height={60}
-            alt={props.title || "a song"}
-            src={props.imageSrc || "/images/fallbackSongImage.jpeg"}
-          />
-        </Box>
-        {/* song meta data */}
-        <Stack rowGap={1} alignItems={"flex-start"}>
-          <Typography variant="subtitle1">{props.title || "A Song"}</Typography>
-          <Typography variant="caption">
-            {props.artist || "Unknown Artist"}
-          </Typography>
-        </Stack>
-        {/* song controllers */}
-        <Box
-          className={"ml-auto flex items-center"}
-          sx={{ gap: ({ spacing }) => spacing(2) }}
+    <>
+      {!!upSong && (
+        <Paper
+          sx={{
+            bottom: ({ components }) =>
+              components?.MuiBottomNavigation?.defaultProps?.style?.height,
+            mx: ({ spacing }) => spacing(2),
+            p: ({ spacing }) => spacing(2),
+          }}
+          className="absolute left-0 right-0 flex flex-col"
         >
-          <Like {...{ liked: props.liked, onLikeChange: props.onLike }} />
-          <DetailedThreeDots menuItems={menuItems} />
-          {props.isPlaying && (
-            <PlayPause onClick={playHandler} isPlaying={props.isPlaying} />
-          )}
-        </Box>
-      </Box>
-    </Paper>
+          <Song
+            songData={upSong}
+            buttonBaseProps={{
+              className: cntl`w-full`,
+            }}
+          />
+          <Box
+            px={({ spacing }) => spacing(2)}
+            mt={({ spacing }) => spacing(-2)}
+          >
+            <MusicSlider
+              total={upSong?.totalLength}
+              traversed={upSong?.traversedLength}
+              songId={upSong.id}
+            />
+          </Box>
+        </Paper>
+      )}
+    </>
   );
 };
 export default UpSong;
