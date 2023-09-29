@@ -15,24 +15,24 @@ type BottomNavigation = {
   label: string;
   icon: ReactNode;
 };
+const navigationData: BottomNavigation[] = [
+  {
+    icon: <GoHomeFill />,
+    label: "Home",
+    link: "/",
+  },
+  {
+    icon: <BsSearch />,
+    label: "Search",
+    link: "/",
+  },
+  {
+    icon: <BsPlusSquare />,
+    label: "Add",
+    link: "/",
+  },
+];
 const Navigation = (props: Props) => {
-  const navigationData: BottomNavigation[] = [
-    {
-      icon: <GoHomeFill />,
-      label: "Home",
-      link: "/",
-    },
-    {
-      icon: <BsSearch />,
-      label: "Search",
-      link: "/",
-    },
-    {
-      icon: <BsPlusSquare />,
-      label: "Add",
-      link: "/",
-    },
-  ];
   return (
     <Paper
       sx={{ position: "absolute", bottom: 0, left: 0, right: 0, width: "100%" }}

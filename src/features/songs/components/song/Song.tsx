@@ -4,15 +4,23 @@ import { Box, ButtonBase, Stack, Typography } from "@mui/material";
 import { BsShare } from "react-icons/bs";
 import Image from "next/image";
 import { ReactNode, useState } from "react";
+import PlayPause from "@features/ui/components/PlayPause";
+import SmallSongImage from "@features/ui/components/songItemImage/SmallSongImage";
+import SongData from "@features/songs/components/songData/SongData";
+import { useStore } from "@features/store/useStore";
+import { Id, ISong } from "@features/store/models/store";
+import SongControllers from "@features/ui/components/songControllers";
 
 type Props = {
-  imageSrc?: string;
-  title?: string;
-  artist?: string;
-  liked?: boolean;
+  songData: ISong;
 };
 const Song = (props: Props) => {
-  const [liked, setLiked] = useState<boolean>(!!props.liked);
+  const { songData } = props;
+
+  const { playSong, pauseSong, toggleLikeSong, selectSong } = useStore();
+
+  const showPlayPause = !!songData.isUp;
+
   const menuItems: ReactNode[] = [
     <>
       <Box>
@@ -27,27 +35,23 @@ const Song = (props: Props) => {
           padding: (theme) => theme.spacing(2),
         }}
         className="flex items-center"
+        onClick={() => selectSong(songData.id)}
       >
-        <Box mr={(theme) => theme.spacing(4)}>
-          <Image
-            width={60}
-            height={60}
-            alt={props.title || "a song"}
-            src={props.imageSrc || "/images/fallbackSongImage.jpeg"}
-          />
-        </Box>
-
-        <Stack rowGap={1} alignItems={"flex-start"}>
-          <Typography variant="subtitle1">{props.title || "A Song"}</Typography>
-          <Typography variant="caption">
-            {props.artist || "Unknown Artist"}
-          </Typography>
-        </Stack>
-
-        <Box className={"ml-auto flex items-center"} sx={{gap : ({spacing})=>spacing(2)}}>
-          <Like {...{ liked, onLikeChange: setLiked }} />
-          <DetailedThreeDots menuItems={menuItems} />
-        </Box>
+        {/* song image */}
+        <SmallSongImage imageSrc={songData.imageSrc} title={songData.title} />
+        {/* song meta data */}
+        <SongData artist={songData.artist} title={songData.title} />
+        {/* song controllers */}
+        <SongControllers
+          {...{
+            pauseSong,
+            playSong,
+            songData,
+            toggleLikeSong,
+            menuItems,
+            showPlayPause,
+          }}
+        />
       </Box>
     </ButtonBase>
   );
