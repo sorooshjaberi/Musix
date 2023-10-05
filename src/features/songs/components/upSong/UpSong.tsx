@@ -1,11 +1,12 @@
 import Song from "@features/songs/components/song/Song";
+import { Id } from "@features/store/models/songSlice";
 import { useStore } from "@features/store/useStore";
 import MusicSlider from "@features/ui/components/musicSlider/MusicSlider";
 import { Box, Paper } from "@mui/material";
 import cntl from "cntl";
 import { isNaN } from "lodash";
 import { useEffect, useRef, useState } from "react";
-const xlog = (...a: any) => console.log("%c" + a.join(" "), "color:#123412;");
+const xlog = (...a: any) => console.log("%c" + a.join(" "), "color:#97d197;");
 
 const songDataAwaiter = (
   audio: HTMLAudioElement,
@@ -25,66 +26,58 @@ const songDataAwaiter = (
   });
 };
 
+let music: null | HTMLAudioElement = null,
+  lastUpSongId: Id | undefined;
+
 type Props = {};
 const UpSong = (props: Props) => {
-  const { upSong } = useStore();
+  const { upSong, pauseSong } = useStore();
   const [trackProgress, setTrackProgress] = useState<number>(0);
   const [trackTotal, setTrackTotal] = useState<number>(0);
-  // const musicPlayerRef = useRef<HTMLAudioElement | null>(
-  //   new Audio(upSong!.songSrc),
-  // );
-
-  const [musicPlayer, setMusicPlayer] = useState<HTMLAudioElement | null>(
-    new Audio(upSong!.songSrc),
-  );
 
   //on song change
   useEffect(() => {
     xlog("song change");
-    updateManualTrackProgress(0);
-    // musicPlayerRef.current?.pause();
-    setMusicPlayer(null);
-    // musicPlayerRef.current = null;
-
-    const audio = new Audio(upSong!.songSrc);
-    songDataAwaiter(audio).then((audioEl) => {
-      setTrackTotal(audioEl.duration);
-      console.log("audio figured out");
-      // musicPlayerRef.current = audio;
-      setMusicPlayer(audio);
-    });
-    xlog(audio.duration);
+    if (upSong?.id !== lastUpSongId) {
+      updateManualTrackProgress(0);
+      music?.pause();
+      music = null;
+      let audio: HTMLAudioElement | null = new Audio(upSong!.songSrc);
+      audio.pause();
+      songDataAwaiter(audio).then((audioEl) => {
+        setTrackTotal(audioEl.duration);
+        music = audioEl;
+        music.play();
+        audio = null;
+      });
+      lastUpSongId = upSong?.id;
+    }
   }, [upSong?.id]);
 
   //pause and play
   useEffect(() => {
-    xlog("pause  play");
     if (upSong?.playing) {
-      // musicPlayerRef.current?.play();
-      musicPlayer?.play();
-      console.log("heeey play")
+      music?.play();
     } else {
-      // musicPlayerRef.current?.pause();
-      musicPlayer?.pause();
+      music?.pause();
     }
-  }, [upSong?.playing, musicPlayer]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [upSong?.playing]);
 
   //music tracker
   useEffect(() => {
-    // musicPlayerRef.current?.addEventListener("timeupdate", () =>
-    //   updateMusicTrack(),
-    // );
-
-    musicPlayer?.addEventListener("timeupdate", () => updateMusicTrack());
+    music?.addEventListener("timeupdate", updateMusicTrack);
+    music?.addEventListener("ended", pauseUpSong);
     return () => {
-      // musicPlayerRef.current?.removeEventListener(
-      musicPlayer?.removeEventListener("timeupdate", updateMusicTrack);
+      music?.removeEventListener("timeupdate", updateMusicTrack);
+      music?.removeEventListener("ended", pauseUpSong);
     };
-  }, [upSong, musicPlayer]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [music]);
 
   const updateMusicTrack = () => {
-    if (musicPlayerRef.current) {
-      const rounded = ~~musicPlayerRef.current.currentTime;
+    if (music) {
+      const rounded = ~~music.currentTime;
       if (rounded !== trackProgress) {
         setTrackProgress(rounded);
       }
@@ -92,10 +85,16 @@ const UpSong = (props: Props) => {
   };
 
   const updateManualTrackProgress = (time: number) => {
-    if (musicPlayerRef.current?.currentTime)
-      musicPlayerRef.current.currentTime = time;
+    if (music && music.currentTime) {
+      music.currentTime = time;
+    }
   };
 
+  const pauseUpSong = () => {
+    if (upSong?.id) {
+      pauseSong(upSong?.id!);
+    }
+  };
   return (
     <>
       {!!upSong && (
