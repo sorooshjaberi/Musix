@@ -6,7 +6,8 @@ import { ReactNode } from "react";
 
 type Props = { children: ReactNode };
 const Layout = ({ children }: Props) => {
-  const {upSong} = useStore()
+  const upSong = useStore((state) => state.upSong);
+
   return (
     <MuiContainer
       maxWidth="xs"
@@ -22,7 +23,10 @@ const Layout = ({ children }: Props) => {
           overflow: "auto",
           padding: (theme) => theme.spacing(4, 2),
           paddingBottom: (theme) =>
-           upSong? `calc(${theme.components?.MuiBottomNavigation?.defaultProps?.style?.height} + ${theme.spacing(20)})` : "initial",
+            upSong
+              ? `calc(${theme.components?.MuiBottomNavigation?.defaultProps
+                  ?.style?.height} + ${theme.spacing(20)})`
+              : "initial",
           height: (theme) => {
             const bottomNavigationHeight =
               theme.components?.MuiBottomNavigation?.defaultProps?.style
@@ -35,7 +39,7 @@ const Layout = ({ children }: Props) => {
       >
         {children}
       </Box>
-      <UpSong />
+      {upSong && <UpSong />}
       <Navigation />
     </MuiContainer>
   );

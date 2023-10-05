@@ -1,4 +1,4 @@
-import { Id } from "@features/store/models/store";
+import { Id } from "@features/store/models/songSlice";
 
 export type TimerStates = {
   traversed?: number;
@@ -11,3 +11,4 @@ export type TimerActions = {
   changeManualTime: ({ traversed, total }: Partial<TimerStates>) => void;
   changeTimerActivation: (activate: boolean) => void;
 };
+export type TimerSliceType = TimerActions & TimerStates

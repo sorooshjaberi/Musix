@@ -1,6 +1,6 @@
 import Header from "@features/home/components/Header";
 import Song from "@features/songs/components/song/Song";
-import { ISong } from "@features/store/models/store";
+import { ISong } from "@features/store/models/songSlice";
 import { useStore } from "@features/store/useStore";
 import { Stack } from "@mui/material";
 import { isArray } from "lodash";
@@ -14,8 +14,7 @@ const mockData: ISong[] = Array.from({ length: 100 }).map((_, index) => ({
   songSrc: "/music/01 Baby (feat. Marina and The Diamonds & Luis Fonsi).mp3",
 }));
 const HomeComponent = (props: Props) => {
-  const { setSongs, songs } = useStore();
-
+  const songs = useStore(state => state.songs);
 
   return (
     <Stack className="h-full">
@@ -27,6 +26,7 @@ const HomeComponent = (props: Props) => {
               key={index}
               buttonBaseProps={{ disableRipple: false }}
               songData={item}
+              
             />
           ))}
         </Stack>

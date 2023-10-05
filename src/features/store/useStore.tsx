@@ -1,85 +1,19 @@
+import { ISong } from "@features/store/models/songSlice";
+import { States } from "@features/store/models/store";
+import { createSongsSlice } from "@features/store/songsSlice";
+import { createTimerSlice } from "@features/store/timerSlice";
+import { devtools } from "zustand/middleware";
 import { create } from "zustand";
+import { mountStoreDevtool } from 'simple-zustand-devtools';
 
-import { States, Actions, Id } from "./models/store";
-import { getSongById, pickUpASong } from "@features/store/utils/storeUtils";
-
-export const useStore = create<States & Actions>((set) => ({
-  songs: [],
-  setSongs: (songs) => set((state) => ({ songs })),
-
-  toggleLikeSong: (id, like = true) =>
-    set((state) => {
-      const selectedSong = getSongById(state, id);
-      if (selectedSong) {
-        selectedSong.liked = like;
-      }
-      return {
-        songs: state.songs,
-      };
-    }),
-  selectSong: (id) =>
-    set((state) => {
-      const selectedSong = getSongById(state, id);
-      if (selectedSong) {
-        pickUpASong(state, selectedSong);
-        selectedSong.playing = true;
-      }
-      return {
-        songs: state.songs,
-      };
-    }),
-  pauseSong: (id) =>
-    set((state) => {
-      const selectedSong = getSongById(state, id);
-      if (selectedSong) {
-        selectedSong.playing = false;
-      }
-      return {
-        songs: state.songs,
-      };
-    }),
-  playSong: (id) =>
-    set((state) => {
-      const selectedSong = getSongById(state, id);
-      if (selectedSong) {
-        selectedSong.playing = true;
-        if (!selectedSong.isUp) {
-          pickUpASong(state, selectedSong);
-        }
-      }
-      return {
-        songs: state.songs,
-      };
-    }),
-  changeTraversedSong: (value, id) =>
-    set((state) => {
-      const selectedSong = getSongById(state, id);
-      if (selectedSong) {
-        selectedSong.traversedLength = value;
-      }
-      return {
-        songs: state.songs,
-      };
-    }),
-  changeTotalSong: (value, id) =>
-    set((state) => {
-      const selectedSong = getSongById(state, id);
-      if (selectedSong) {
-        selectedSong.totalLength = value;
-      }
-      return {
-        songs: state.songs,
-      };
-    }),
-  editSongData: (songData, id) => {
-    set((state) => {
-      const selectedSong = getSongById(state, id);
-      if (selectedSong) {
-        Object.assign(selectedSong, songData);
-      }
-      return {
-        songs: state.songs,
-      };
-    });
-  },
+let store = create<States>()((...a) => ({
+  ...createSongsSlice(...a),
+  // ...createTimerSlice(...a),
 }));
+
+
+if (process.env.NODE_ENV === 'development') {
+  mountStoreDevtool('Store', store);
+}
+
+export const useStore = store;

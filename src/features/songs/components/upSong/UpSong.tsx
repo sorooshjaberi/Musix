@@ -1,48 +1,100 @@
 import Song from "@features/songs/components/song/Song";
 import { useStore } from "@features/store/useStore";
 import MusicSlider from "@features/ui/components/musicSlider/MusicSlider";
-import { Box, Paper, Slider, Typography } from "@mui/material";
-import ReactAudioPlayer from "react-audio-player";
+import { Box, Paper } from "@mui/material";
 import cntl from "cntl";
-import { HtmlHTMLAttributes, useEffect, useRef, useState } from "react";
-import { useTimer } from "@features/store/useTimer";
+import { isNaN } from "lodash";
+import { useEffect, useRef, useState } from "react";
+const xlog = (...a: any) => console.log("%c" + a.join(" "), "color:#123412;");
+
+const songDataAwaiter = (
+  audio: HTMLAudioElement,
+): Promise<HTMLAudioElement> => {
+  const initTime = Date.now();
+  return new Promise((res, rej) => {
+    const interval = setInterval(() => {
+      const duration = audio.duration;
+      if (Date.now() > initTime + 1000 * 5) {
+        clearInterval(interval);
+        rej();
+      }
+      if (!isNaN(duration)) {
+        res(audio);
+      }
+    }, 5);
+  });
+};
 
 type Props = {};
 const UpSong = (props: Props) => {
   const { upSong } = useStore();
-  const { total, traversed, changeManualTime, timerActivated } = useTimer();
-  const [musicPlayer, setMusicPlayer] = useState<null | HTMLAudioElement>(null);
+  const [trackProgress, setTrackProgress] = useState<number>(0);
+  const [trackTotal, setTrackTotal] = useState<number>(0);
+  // const musicPlayerRef = useRef<HTMLAudioElement | null>(
+  //   new Audio(upSong!.songSrc),
+  // );
+
+  const [musicPlayer, setMusicPlayer] = useState<HTMLAudioElement | null>(
+    new Audio(upSong!.songSrc),
+  );
+
+  //on song change
+  useEffect(() => {
+    xlog("song change");
+    updateManualTrackProgress(0);
+    // musicPlayerRef.current?.pause();
+    setMusicPlayer(null);
+    // musicPlayerRef.current = null;
+
+    const audio = new Audio(upSong!.songSrc);
+    songDataAwaiter(audio).then((audioEl) => {
+      setTrackTotal(audioEl.duration);
+      console.log("audio figured out");
+      // musicPlayerRef.current = audio;
+      setMusicPlayer(audio);
+    });
+    xlog(audio.duration);
+  }, [upSong?.id]);
 
   //pause and play
   useEffect(() => {
+    xlog("pause  play");
     if (upSong?.playing) {
+      // musicPlayerRef.current?.play();
       musicPlayer?.play();
+      console.log("heeey play")
     } else {
+      // musicPlayerRef.current?.pause();
       musicPlayer?.pause();
     }
   }, [upSong?.playing, musicPlayer]);
 
-  //track timer
+  //music tracker
   useEffect(() => {
-    const timer = setInterval(() => {
-      if (musicPlayer && upSong && timerActivated) {
-        changeManualTime({
-          total: musicPlayer.duration,
-          traversed: musicPlayer.currentTime,
-        });
+    // musicPlayerRef.current?.addEventListener("timeupdate", () =>
+    //   updateMusicTrack(),
+    // );
+
+    musicPlayer?.addEventListener("timeupdate", () => updateMusicTrack());
+    return () => {
+      // musicPlayerRef.current?.removeEventListener(
+      musicPlayer?.removeEventListener("timeupdate", updateMusicTrack);
+    };
+  }, [upSong, musicPlayer]);
+
+  const updateMusicTrack = () => {
+    if (musicPlayerRef.current) {
+      const rounded = ~~musicPlayerRef.current.currentTime;
+      if (rounded !== trackProgress) {
+        setTrackProgress(rounded);
       }
-    }, 1000);
-
-    return () => clearInterval(timer);
-  }, [musicPlayer, upSong, timerActivated]);
-
-  //manual timer set
-  useEffect(() => {
-    if (upSong) {
-      if (musicPlayer?.currentTime && upSong.traversedLength)
-        musicPlayer.currentTime = upSong.traversedLength;
     }
-  }, [upSong?.traversedLength, upSong?.totalLength]);
+  };
+
+  const updateManualTrackProgress = (time: number) => {
+    if (musicPlayerRef.current?.currentTime)
+      musicPlayerRef.current.currentTime = time;
+  };
 
   return (
     <>
@@ -67,12 +119,12 @@ const UpSong = (props: Props) => {
             mt={({ spacing }) => spacing(-2)}
           >
             <MusicSlider
-              total={musicPlayer?.duration}
-              traversed={musicPlayer?.currentTime}
+              total={trackTotal}
+              traversed={trackProgress}
               songId={upSong.id}
+              controllSongProgress={updateManualTrackProgress}
             />
           </Box>
-          <audio ref={setMusicPlayer} src={upSong.songSrc} />
         </Paper>
       )}
     </>

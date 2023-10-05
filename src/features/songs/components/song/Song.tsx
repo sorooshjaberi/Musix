@@ -1,12 +1,12 @@
-import { Box, ButtonBase, ButtonBaseProps } from "@mui/material";
+import { Box, ButtonBase, ButtonBaseProps, Icon } from "@mui/material";
 import { BsShare } from "react-icons/bs";
 import Image from "next/image";
-import { ReactNode, useState } from "react";
+import { ReactNode, useEffect, useState } from "react";
 import PlayPause from "@features/ui/components/PlayPause";
 import SmallSongImage from "@features/ui/components/songItemImage/SmallSongImage";
 import SongData from "@features/songs/components/SongMetaData";
 import { useStore } from "@features/store/useStore";
-import { Id, ISong } from "@features/store/models/store";
+import { Id, ISong } from "@features/store/models/songSlice";
 import SongControllers from "@features/ui/components/songControllers";
 import clsx from "clsx";
 import cntl from "cntl";
@@ -17,26 +17,31 @@ type Props = {
 const Song = (props: Props) => {
   const { songData } = props;
 
-  const { playSong, pauseSong, toggleLikeSong, selectSong } = useStore();
+  const playSong = useStore((store) => store.playSong);
+  const pauseSong = useStore((store) => store.pauseSong);
+  const selectAndPlay = useStore((store) => store.selectAndPlay);
+  const toggleLikeSong = useStore((store) => store.toggleLikeSong);
+  const upSong = useStore((store) => store.upSong);
 
-  const showPlayPause = !!songData.isUp;
+  const showPlayPause = songData.id === upSong?.id;
 
   const menuItems: ReactNode[] = [
     <>
-      <Box>
+      <Icon>
         <BsShare />
-      </Box>
+      </Icon>
     </>,
   ];
   return (
     <ButtonBase
       disableRipple
+      onClick={() => selectAndPlay(songData.id)}
       {...{
         ...props.buttonBaseProps,
         className: clsx(
           "block",
           cntl`overflow-hidden w-full`,
-          props.buttonBaseProps?.className,
+          props.buttonBaseProps?.className && props.buttonBaseProps?.className,
         ),
       }}
     >
@@ -45,7 +50,6 @@ const Song = (props: Props) => {
           padding: (theme) => theme.spacing(2),
         }}
         className="flex items-center"
-        onClick={() => selectSong(songData.id)}
       >
         {/* song image */}
         <SmallSongImage imageSrc={songData.imageSrc} title={songData.title} />

@@ -1,4 +1,4 @@
-import { ISong, Id } from "@features/store/models/store";
+import { ISong, Id } from "@features/store/models/songSlice";
 import PlayPause from "@features/ui/components/PlayPause";
 import DetailedThreeDots from "@features/ui/components/detailedThreeDots";
 import Like from "@features/ui/components/like";

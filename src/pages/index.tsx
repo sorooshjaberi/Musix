@@ -4,7 +4,7 @@ import Head from "next/head";
 
 import { ICommonTagsResult, parseFile } from "music-metadata";
 import { GetStaticProps } from "next";
-import { ISong } from "@features/store/models/store";
+import { ISong } from "@features/store/models/songSlice";
 import { get, set } from "lodash";
 import { useStore } from "@features/store/useStore";
 import { useEffect } from "react";
@@ -62,8 +62,6 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
 };
 
 export default function Home(props: Props) {
-  const { mode, toggleMode } = usePaletteMode();
-
   const { setSongs } = useStore();
 
   useEffect(() => {
