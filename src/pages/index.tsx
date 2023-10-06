@@ -34,7 +34,7 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
 
     return await Promise.all(promises);
   }
-  const files = await fs.readdir(musicPath);
+  const files = (await fs.readdir(musicPath)).slice(0, 8);
   const metaDatas = await parseMetaData(files);
   const mockDatas: ISong[] = metaDatas.map((metaData) => {
     const pic = metaData.picture;

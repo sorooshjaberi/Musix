@@ -37,7 +37,6 @@ const UpSong = (props: Props) => {
 
   //on song change
   useEffect(() => {
-    xlog("song change");
     if (upSong?.id !== lastUpSongId) {
       updateManualTrackProgress(0);
       music?.pause();
