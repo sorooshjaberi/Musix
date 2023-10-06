@@ -12,17 +12,14 @@ const songDataAwaiter = (
   audio: HTMLAudioElement,
 ): Promise<HTMLAudioElement> => {
   const initTime = Date.now();
-  return new Promise((res, rej) => {
-    const interval = setInterval(() => {
-      const duration = audio.duration;
-      if (Date.now() > initTime + 1000 * 5) {
-        clearInterval(interval);
-        rej();
-      }
-      if (!isNaN(duration)) {
+  return new Promise((res) => {
+    const durationFetcher = (event: Event) => {
+      audio.removeEventListener("durationchange", durationFetcher);
+      if (!isNaN(audio.duration)) {
         res(audio);
       }
-    }, 5);
+    };
+    audio?.addEventListener("durationchange", durationFetcher);
   });
 };
 
@@ -47,7 +44,7 @@ const UpSong = (props: Props) => {
         setTrackTotal(audioEl.duration);
         music = audioEl;
         music.play();
-        audio = null;
+        music.preload = "metadata";
       });
       lastUpSongId = upSong?.id;
     }
@@ -86,6 +83,13 @@ const UpSong = (props: Props) => {
   const updateManualTrackProgress = (time: number) => {
     if (music && music.currentTime) {
       music.currentTime = time;
+    }
+  };
+
+  const changeTotal = () => {
+    if (music) {
+      const duration = music.duration;
+      setTrackTotal(duration);
     }
   };
 
