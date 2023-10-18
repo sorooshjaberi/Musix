@@ -36,6 +36,7 @@ const Song = (props: Props) => {
     <ButtonBase
       disableRipple
       onClick={() => selectAndPlay(songData.id)}
+      sx={{display : "block"}}
       {...{
         ...props.buttonBaseProps,
         className: clsx(
