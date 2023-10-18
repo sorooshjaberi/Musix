@@ -86,12 +86,24 @@ const UpSong = (props: Props) => {
     }
   };
 
-  const changeTotal = () => {
-    if (music) {
-      const duration = music.duration;
-      setTrackTotal(duration);
+  useEffect(() => {
+    if ("mediaSession" in navigator) {
+      navigator.mediaSession.metadata = new MediaMetadata({
+        artist: upSong?.artist,
+        title: upSong?.title,
+        artwork: upSong?.imageSrc
+          ? [
+              {
+                src: upSong?.imageSrc!,
+                sizes: "96x96",
+                type: "image/jpg",
+              },
+            ]
+          : undefined,
+      });
+      navigator.mediaSession.setActionHandler("play", () => music?.play());
     }
-  };
+  }, []);
 
   const pauseUpSong = () => {
     if (upSong?.id) {
