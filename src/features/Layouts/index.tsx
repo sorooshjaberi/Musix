@@ -1,4 +1,5 @@
 import Navigation from "@features/Layouts/components/navigation/Navigation";
+import Header from "@features/home/components/Header";
 import UpSong from "@features/songs/components/upSong/UpSong";
 import { useStore } from "@features/store/useStore";
 import { Box, Container as MuiContainer, useTheme } from "@mui/material";
@@ -11,12 +12,13 @@ const Layout = ({ children }: Props) => {
   return (
     <MuiContainer
       maxWidth="xs"
-      className="relative h-[100vh] max-h-[900px]"
+      className="relative h-[100dvh] max-h-[900px]"
       sx={{
         boxShadow: "0 0 10px -3px #000",
         paddingTop: (theme) => theme.spacing(2),
       }}
     >
+      <Header />
       <Box
         component={"main"}
         sx={{
