@@ -16,6 +16,8 @@ const Layout = ({ children }: Props) => {
       sx={{
         boxShadow: "0 0 10px -3px #000",
         paddingTop: (theme) => theme.spacing(2),
+        display : "flex",
+        flexDirection : "column"
       }}
     >
       <Header />
