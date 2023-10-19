@@ -12,7 +12,7 @@ const Layout = ({ children }: Props) => {
   return (
     <MuiContainer
       maxWidth="xs"
-      className="relative h-[100dvh] max-h-[900px]"
+      className="relative flex h-[100dvh] max-h-[900px] flex-col"
       sx={{
         boxShadow: "0 0 10px -3px #000",
         paddingTop: (theme) => theme.spacing(2),
@@ -21,8 +21,8 @@ const Layout = ({ children }: Props) => {
       <Header />
       <Box
         component={"main"}
+        className="flex-1 overflow-auto"
         sx={{
-          overflow: "auto",
           padding: (theme) => theme.spacing(4, 2),
           paddingBottom: (theme) =>
             upSong

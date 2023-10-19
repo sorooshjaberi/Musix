@@ -34,15 +34,13 @@ const navigationData: BottomNavigation[] = [
 ];
 const Navigation = (props: Props) => {
   return (
-    <Paper
-      sx={{ position: "absolute", bottom: 0, left: 0, right: 0, width: "100%" }}
-    >
+    <Paper>
       <BottomNavigation className="flex items-center justify-between">
         {navigationData.map((navigation, index) => (
           <Link
             href={navigation.link}
             key={index}
-            className="flex-1 text-center h-full"
+            className="h-full flex-1 text-center"
           >
             <BottomNavigationAction
               sx={{
