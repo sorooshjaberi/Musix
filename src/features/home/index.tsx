@@ -18,7 +18,6 @@ const HomeComponent = (props: Props) => {
 
   return (
     <Stack className="h-full">
-      <Header />
       {isArray(songs) && (
         <Box className="h-full overflow-auto">
           <Stack className="flex-1 overflow-auto">
